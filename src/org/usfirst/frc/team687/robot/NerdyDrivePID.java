@@ -5,16 +5,15 @@
  */
 
 package org.usfirst.frc.team687.robot;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team687.robot.util.NerdyIntegrator;
 
 /**
  *
  * @author Wesley
  */
 public class NerdyDrivePID {
-    private static double kP = 0.00444444;
-    private static double kI = 0.0000444444;
+    private final static double kP = 0.00444444;
+    private final static double kI = 0.0000444444;
     private static double heading = 0;
     private static double error = 0;
     private static double lastError;
@@ -27,14 +26,6 @@ public class NerdyDrivePID {
     
     public static void setHeading(double head)   {
         heading = (head+360.0)%360;
-    }
-    
-    public static void setKP(double p)  {
-        kP = p;
-    }
-    
-    public static void setKI(double i)  {
-        kI = i;
     }
     
     private static double shortestRotation(double desired)  {
@@ -51,7 +42,6 @@ public class NerdyDrivePID {
     public static double getPID(double desired) {
         lastError = error;
         error = shortestRotation(desired);
-        SmartDashboard.putNumber("error",error);
         double p = error * kP;
         integration += ((error + lastError)/2)*.02;
         double i = integration * kI;

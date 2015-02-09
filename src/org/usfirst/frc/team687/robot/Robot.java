@@ -24,7 +24,6 @@ public class Robot extends IterativeRobot {
 	Joystick leftJoy, rightJoy;
 	TalonSRX ftLeft, ftRight, bkLeft, bkRight;
 	IMUAdvanced imu;
-	boolean first_iteration = true;
 	
     public void robotInit() {
     	leftJoy = new Joystick(0);
@@ -34,18 +33,19 @@ public class Robot extends IterativeRobot {
     	bkLeft = new TalonSRX(4);
     	bkRight = new TalonSRX(5);
     	imu = new IMUAdvanced(new SerialPort(57600,SerialPort.Port.kMXP));
+    	
+    	boolean is_calibrating = imu.isCalibrating();
+        while(is_calibrating)   {
+            Timer.delay(0.3);
+            imu.zeroYaw();
+        }
     }
 
     /**
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
-    	boolean is_calibrating = imu.isCalibrating();
-        if(first_iteration && is_calibrating)   {
-            Timer.delay(0.3);
-            imu.zeroYaw();
-            first_iteration = false;
-        }
+    	
     }
 
     /**
@@ -56,9 +56,9 @@ public class Robot extends IterativeRobot {
         boolean beta = rightJoy.getRawButton(4);
         double fl, fr, bl, br;
         if(beta)	{
-        	NerdyDrive.driveBeta(leftJoy.getX(), leftJoy.getY(), rightJoy.getX(), rightJoy.getY());
+        	NerdyDrive.driveBeta(leftJoy.getX(), -leftJoy.getY(), rightJoy.getX(), -rightJoy.getY());
         }	else	{
-        	NerdyDrive.driveAlpha(leftJoy.getX(), leftJoy.getY(), rightJoy.getX());
+        	NerdyDrive.driveAlpha(leftJoy.getX(), -leftJoy.getY(), rightJoy.getX());
         }
         
         fl = NerdyDrive.getFtLeft();
